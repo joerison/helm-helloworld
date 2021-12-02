@@ -5,12 +5,14 @@
 replicaCount: 1
 
 image:
-  repository: joerison/hello-world
+  repository: joerison/helloworld-nginx
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
 
-imagePullSecrets: []
+imagePullSecrets:
+  - name: quay-registry-secret
+
 nameOverride: ""
 fullnameOverride: ""
 

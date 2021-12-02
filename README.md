@@ -28,6 +28,10 @@ Open your browser and check http://localhost
     docker tag helloworld-nginx joerison/helloworld-nginx
     docker push joerison/helloworld-nginx:latest
 
+## Secret
+    kubectl create secret docker-registry quay-registry-secret --docker-server=docker.io --docker-username=USERNAME --docker-password=PASSWORD --docker-email=EMAIL
+    kubectl delete secret quay-registry-secret
+
 ## Install, delete, upgrade helm chart
     helm install helloworld ./helloworld-chart
     helm delete helloworld
@@ -58,3 +62,8 @@ Open your browser and check http://localhost
     kubectl apply -f service-account.yaml
     kubectl describe serviceaccount admin-user -n kubernetes-dashboard
     kubectl describe secret admin-user-token-7pfdb -n kubernetes-dashboard
+
+
+
+
+
