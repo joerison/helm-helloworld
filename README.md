@@ -1,7 +1,7 @@
 # Helm Hello World
 
 ## Technologies
-> helm  | k8s | ngnix | kind
+> helm  | k8s | ngnix | kind | jenkins
 
 ## Requirements
 - Kind - https://kind.sigs.k8s.io/docs/user/quick-start/
@@ -16,8 +16,7 @@
   ```
 
 ## Build image
-    cd helloworld-nginx
-    docker build -t helloworld-nginx .
+    docker build -t helloworld-nginx ./helloworld-nginx
 
 If you want test it local you can execute: `docker run -p 80:80 hello-world`
 

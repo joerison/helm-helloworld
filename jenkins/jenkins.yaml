@@ -1,0 +1,102 @@
+# Persistent Volume Claim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jenkins-pv-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+
+# Deployment Config
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins
+  template:
+    metadata:
+      labels:
+        app: jenkins
+    spec:
+      containers:
+        # jenkins container
+        - name: jenkins
+          image: jenkinsci/blueocean
+          ports:
+            - containerPort: 8080
+            - containerPort: 50000
+          volumeMounts:
+            - name: jenkins-data
+              mountPath: /var/jenkins_home
+            - mountPath: /certs/client
+              name: jenkins-docker-certs
+              readOnly: true
+          env:
+            - name: DOCKER_CERT_PATH
+              value: /certs/client
+            - name: DOCKER_HOST
+              value: tcp://docker:2376
+            - name: DOCKER_TLS_VERIFY
+              value: "1"
+
+        # dind container
+        - image: docker:dind
+          name: jenkins-docker
+          ports:
+            - containerPort: 2376
+          resources: {}
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - mountPath: /certs/client
+              name: jenkins-docker-certs
+            - mountPath: /var/jenkins_home
+              name: jenkins-data
+
+      volumes:
+        - name: jenkins-data
+          persistentVolumeClaim:
+            claimName: jenkins-pv-claim
+        - name: jenkins-docker-certs
+          emptyDir: {}
+
+# Jenkins Service Config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins-service
+spec:
+  selector:
+    app: jenkins
+  type: NodePort
+  ports:
+    - name: "8084"
+      port: 8084
+      targetPort: 8080
+    - name: "50000"
+      port: 50000
+      targetPort: 50000
+
+# Dind Service Config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: docker
+spec:
+  selector:
+    app: jenkins
+  type: NodePort
+  ports:
+    - name: "2376"
+      port: 2376
+      targetPort: 2376
