@@ -41,6 +41,7 @@ Open your browser and check http://localhost
 
 ## kubectl commands
 - Display services: `kubectl get svc --watch`
+- Access pod shel: `kubectl exec -it -n jenkins jenkins-7985cb9b55-5dr2m -c jenkins -- sh -c "clear; (bash || ash || sh)"`
 
 ## Generate helm package
     helm package helloworld-chart --debug
